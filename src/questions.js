@@ -9,7 +9,7 @@ export default class QuestionsPage extends React.Component {
         super(props);
         this.state = {
             list: [],
-            viewFlag: true,
+            viewFlag: false,
             suspendVotes: false,
             redirect: "",
         };
@@ -26,8 +26,9 @@ export default class QuestionsPage extends React.Component {
                 list: Object.values(questions),
                 unsub: this.props.store.subscribe(this.updateList),
             });
-        } catch (e) {
-            console.log("error mounting questions");
+        }
+        catch (error) {
+            console.log(error);
         }
     }
 
@@ -61,6 +62,7 @@ export default class QuestionsPage extends React.Component {
     }
 
     voteHandler = async (id, option, e) => {
+        console.log(option);
         if (this.state.suspendVotes) {
             alert("Vote in progress please wait");
             return
