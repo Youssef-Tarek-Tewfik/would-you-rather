@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./select.css";
 
 export default class SelectPage extends React.Component {
@@ -8,6 +8,7 @@ export default class SelectPage extends React.Component {
         super(props);
         this.state = {
             list: [],
+            loaded: false,
         };
     }
 
@@ -23,21 +24,25 @@ export default class SelectPage extends React.Component {
                 const {id, name} = users[user];
                 list.push({id, name});
             }
-            this.setState({list});
+            this.setState({list, loaded: true});
         }
         catch (e) {
-
+            console.log(e);
         }
     }
 
     render = () => (
         <div>
+            {this.state.loaded? null: <span>Loading</span>}
             <ul>
                 {this.state.list.map((i) =>
                     <li key={i.id}>
-                        <button onClick={() => this.buttonHandler(i)}>{i.name}</button>
+                        <Link to="/">
+                            <button onClick={() => this.buttonHandler(i)}>{i.name}</button>
+                        </Link>
                     </li>
-                )} 
+                )
+                } 
             </ul>
         </div>
     );

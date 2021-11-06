@@ -1,51 +1,73 @@
-import React from "react";
-import { BrowserRouter, Link, Redirect, Route } from "react-router-dom";
-import { customCreateStore } from "./store";
-import SelectPage from "./select";
-import QuestionsPage from "./questions";
-import SubmitPage from "./submit";
-import "./App.css";
+import React from 'react';
+import { BrowserRouter, Link, Route, Redirect } from 'react-router-dom';
+import SelectPage from './select';
+import QuestionsPage from './questions';
+import SubmitPage from './submit';
+import LeaderboardPage from './leaderboard';
+import DetailsPage from './details';
+import './App.css';
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      user: "",
-      displayedName: "",
+      user: '',
+      displayedName: '',
+      detailsId: '',
     };
   }
 
-  componentDidMount = async () => {
-    this.setState({store: await customCreateStore()});
-    // this.state.store
+  componentDidMount = () => {
+    // this.props.store.dispatch(initializeStore());
   }
 
   selectHandler = (user, displayedName) => {
     this.setState({user, displayedName});
   }
 
+  selectAlert = () => {
+    this.state.user || alert('Please select a user');
+  }
+
+  setDetailsId = detailsId => {
+    this.setState({detailsId});
+  }
+
   render = () => (
     <BrowserRouter>
-    <Redirect to="/"/>
-      <Link to="/questions">
-        <button>Questions</button>
+      <Link to={this.state.user? '/': '/select'}>
+        <button onClick={this.selectAlert}>Home</button>
       </Link>
-      <Link to="/submit">
-        <button>Submit</button>
+      <Link to={this.state.user? '/add': '/select'}>
+        <button onClick={this.selectAlert}>Add</button>
       </Link>
-      <Link to="/select">
-        <button>Select User</button>
+      <Link to='/leaderboard'>
+        <button>Leaderboard</button>
       </Link>
-      <span>{this.state.user? "Current User: " + this.state.displayedName: ""}</span>
-      <Route exact path="/select" render={() =>
-        <SelectPage store={this.state.store} selectHandler={this.selectHandler}/>
+      <Link to='/select'>
+        <button onClick={() => this.selectHandler('', '')}>Select User</button>
+      </Link>
+      <span>{'Current User: ' + this.state.displayedName}</span>
+      <Route exact path='/' render={() =>
+        <QuestionsPage store={this.props.store} user={this.state.user} setDetailsId={this.setDetailsId}/>
       }/>
-      <Route exact path="/questions" render={() =>
-        <QuestionsPage store={this.state.store} user={this.state.user}/>
+      <Route exact path='/add' render={() =>
+        <SubmitPage store={this.props.store} user={this.state.user}/>
       }/>
-      <Route exact path="/submit" render={() =>
-        <SubmitPage store={this.state.store} user={this.state.user}/>
+      <Route exact path='/leaderboard' render={() =>
+        <LeaderboardPage store={this.props.store}/>
+      }/>
+      <Route exact path='/select' render={() =>
+        <SelectPage store={this.props.store} selectHandler={this.selectHandler}/>
+      }/>
+      <Route path='/questions' render={() => 
+        <DetailsPage store={this.props.store} id={this.state.detailsId} user={this.state.user}/>
+      }/>
+      <Route path='/404' render={() => {
+        alert('404: Not Found\nRedirecting...');
+        return <Redirect to='/select'/>
+      }
       }/>
     </BrowserRouter>
   );

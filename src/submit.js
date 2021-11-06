@@ -1,5 +1,6 @@
 import React from "react";
 import { submitQuestion } from "./store";
+import { Redirect } from "react-router";
 
 export default class SubmitPage extends React.Component {
     constructor(props) {
@@ -11,7 +12,11 @@ export default class SubmitPage extends React.Component {
         };
     }
 
-    componentDidMount = async () => {}
+    componentDidMount = () => {
+        if (!this.props.user) {
+            alert("No user selected.\nRedirecting...");
+        }
+    }
 
     optionAHandler = e => {
         this.setState({optionA: e.target.value});
@@ -22,12 +27,13 @@ export default class SubmitPage extends React.Component {
     }
 
     confirmHandler = e => {
-        if (this.props.store && this.state.optionA && this.state.optionB) {
+        if (!this.props.user) {
+            alert("Please select a user");
+        }
+        else if (this.props.store && this.state.optionA && this.state.optionB) {
             this.props.store.dispatch(submitQuestion(this.props.user, this.state.optionA, this.state.optionB));
             this.setState({success: true});
-        }
-        else if (!this.props.user) {
-            alert("Please select a user");
+            alert("Success");
         }
         else {
             alert("Error\nMake sure the fields are not blank");
@@ -36,6 +42,8 @@ export default class SubmitPage extends React.Component {
 
     render = () => (
         <div>
+            {this.props.user? null: <Redirect to='/select'/>}
+            {this.state.success && <Redirect to='/'/>}
             <br/>
             <span>Would you rather</span>
             <br/>
@@ -45,7 +53,6 @@ export default class SubmitPage extends React.Component {
             <br/>
             <input onChange={this.optionBHandler} placeholder="Option B"></input>
             <button onClick={this.confirmHandler}>Confirm</button>
-            {this.state.success && <span>Success</span>}
         </div>
     );
 }

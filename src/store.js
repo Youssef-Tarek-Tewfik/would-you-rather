@@ -4,6 +4,7 @@ import { _getUsers, _getQuestions, _saveQuestion, _saveQuestionAnswer } from "./
 const SUBMIT_QUESTION = "SUBMIT_QUESTION";
 const SUBMIT_ANSWER = "SUBMIT_ANSWER";
 const USER_LOGIN = "USER_LOGIN";
+const INITIALIZE = "INITIALIZE";
 
 export function submitQuestion(author, optionOneText, optionTwoText) {
     return {
@@ -23,6 +24,10 @@ export function submitAnswer(authedUser, qid, answer) {
     };
 }
 
+export function initializeStore() {
+    return {type: INITIALIZE};
+}
+
 export function userLogin(user) {
     return {
         type: USER_LOGIN,
@@ -30,17 +35,15 @@ export function userLogin(user) {
     };
 }
 
-export async function customCreateStore() {
-    const users = await _getUsers();
-    const questions = await _getQuestions();
-
-    const initialState = {
-        users,
-        questions,
-    };
-
-    return createStore(async (state = initialState, action) => {
+export function customCreateStore() {
+    const store = createStore(async (state = {}, action) => {
         switch (action.type) {
+            case INITIALIZE:
+                return {
+                    users: await _getUsers(),
+                    questions: await _getQuestions(),
+                };
+
             case SUBMIT_QUESTION:
                 await _saveQuestion(action);
                 return {
@@ -59,4 +62,6 @@ export async function customCreateStore() {
                 return state;
         }
     });
+    store.dispatch(initializeStore());
+    return store;
 }
