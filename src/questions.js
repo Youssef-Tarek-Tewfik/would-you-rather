@@ -94,9 +94,11 @@ export default class QuestionsPage extends React.Component {
             </div>;
         }
         return <div key={element.id}>
-            <button onClick={e => this.voteHandler(element.id, "optionOne", e)}>{element.optionOne.text}</button>
+            <span style={{fontSize: '1.25em'}}>{element.optionOne.text}</span>
+            <br/>
             <span> or </span>
-            <button onClick={e => this.voteHandler(element.id, "optionTwo", e)}>{element.optionTwo.text}</button>
+            <br/>
+            <span style={{fontSize: '1.25em'}}>{element.optionTwo.text}</span>
             <br/>
             <Link to={"/questions/" + element.id}>
                 <button onClick={() => this.props.setDetailsId(element.id)}>Details</button>
