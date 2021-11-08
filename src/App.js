@@ -16,32 +16,38 @@ class App extends React.Component {
       user: '',
       displayedName: '',
       detailsId: '',
+      redirector: '',
     };
   }
 
-  componentDidMount = () => {
-    // this.props.store.dispatch(initializeStore());
-  }
+  componentDidMount = () => {}
 
   selectHandler = (user, displayedName) => {
     this.setState({user, displayedName});
   }
 
-  selectAlert = () => {
-    this.state.user || alert('Please select a user');
+  selectAlert = redirector => {
+    if (!this.state.user) {
+      alert('Please select a user');
+      this.setRedirector(redirector);
+    }
   }
 
   setDetailsId = detailsId => {
     this.setState({detailsId});
   }
 
+  setRedirector = redirector => {
+    this.setState({redirector});
+  }
+
   render = () => (
     <BrowserRouter>
       <Link to={this.state.user? '/': '/select'}>
-        <button onClick={this.selectAlert}>Home</button>
+        <button onClick={() => this.selectAlert('/')}>Home</button>
       </Link>
       <Link to={this.state.user? '/add': '/select'}>
-        <button onClick={this.selectAlert}>Add</button>
+        <button onClick={() => this.selectAlert('/add')}>Add</button>
       </Link>
       <Link to='/leaderboard'>
         <button>Leaderboard</button>
@@ -52,19 +58,19 @@ class App extends React.Component {
       <span>{'Current User: ' + this.state.displayedName}</span>
       <Switch>
         <Route exact path='/' render={() =>
-          <QuestionsPage store={this.props.store} user={this.state.user} setDetailsId={this.setDetailsId}/>
+          <QuestionsPage store={this.props.store} user={this.state.user} setDetailsId={this.setDetailsId} setRedirector={this.setRedirector}/>
         }/>
         <Route exact path='/add' render={() =>
-          <SubmitPage store={this.props.store} user={this.state.user}/>
+          <SubmitPage store={this.props.store} user={this.state.user} setRedirector={this.setRedirector}/>
         }/>
         <Route exact path='/leaderboard' render={() =>
           <LeaderboardPage store={this.props.store}/>
         }/>
         <Route exact path='/select' render={() =>
-          <SelectPage store={this.props.store} selectHandler={this.selectHandler}/>
+          <SelectPage store={this.props.store} selectHandler={this.selectHandler} redirector={this.state.redirector}/>
         }/>
         <Route path='/questions' render={() => 
-          <DetailsPage store={this.props.store} id={this.state.detailsId} user={this.state.user}/>
+          <DetailsPage store={this.props.store} id={this.state.detailsId} user={this.state.user} setRedirector={this.setRedirector}/>
         }/>
         <Route render={() =>
           <NotFoundPage/>

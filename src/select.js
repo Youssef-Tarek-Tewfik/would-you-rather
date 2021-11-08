@@ -37,7 +37,7 @@ export default class SelectPage extends React.Component {
             <ul>
                 {this.state.list.map((i) =>
                     <li key={i.id}>
-                        <Link to="/">
+                        <Link to={this.props.redirector}>
                             <button onClick={() => this.buttonHandler(i)}>{i.name}</button>
                         </Link>
                     </li>

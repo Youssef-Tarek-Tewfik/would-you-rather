@@ -15,6 +15,7 @@ export default class SubmitPage extends React.Component {
     componentDidMount = () => {
         if (!this.props.user) {
             alert("No user selected.\nRedirecting...");
+            this.props.setRedirector('/add');
         }
     }
 

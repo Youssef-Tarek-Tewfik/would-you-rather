@@ -18,6 +18,7 @@ export default class QuestionsPage extends React.Component {
     async componentDidMount() {
         if (!this.props.user) {
             alert("No user selected.\nRedirecting...");
+            this.props.setRedirector('/');
             return;
         }
         try {
